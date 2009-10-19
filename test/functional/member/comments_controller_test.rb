@@ -51,10 +51,10 @@ class Member::CommentsControllerTest < ActionController::TestCase
         post :remove, :id => @comment.id
       end
       
-      should_change "Comment.count", :by => -1
+      should_change("the number of comments", :by => -1){ Comment.count }
       should_set_the_flash_to I18n.t("tog_core.site.comment.removed")
       should_respond_with :redirect
-      should_redirect_to ("http://www.example.com") { "http://www.example.com" }
+      should_redirect_to("http://www.example.com") { "http://www.example.com" }
     end
   end
 

@@ -66,7 +66,7 @@ class ConfigTest < Test::Unit::TestCase
         setup do 
           Tog::Config.init_with("key", "new_value")
         end
-        should_not_change 'Tog::Config["key"]'
+        should_not_change("the Tog::Config['key']") { 'Tog::Config["key"]' }
       end
       
     end
