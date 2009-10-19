@@ -13,7 +13,7 @@ rescue Exception => e
 end
 
 begin
-  gem 'mocha', '0.9.7'
+  gem 'mocha', '>=0.9.7'
   require 'mocha' 
 rescue Exception => e
   puts "\n\nYou need mocha 0.9.7 or greater to test tog_core. Visit http://mocha.rubyforge.org to view details.\n\n" 

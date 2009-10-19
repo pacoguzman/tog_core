@@ -9,7 +9,7 @@ class CommentsController < ApplicationController
 
     @comment.spam = Cerberus.check_spam(@comment, request)
     
-    if params[:twitter] && current_user.service_provider.include?('twitter')
+    if params[:twitter] && !current_user.nil? && current_user.respond_to?(:service_provider) && current_user.service_provider.include?('twitter')
       current_user.consumer_token.each do | token |
         token.client.update params[:comment][:comment] if token.instance_of? TwitterToken
       end
