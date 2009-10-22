@@ -107,7 +107,12 @@ module Interface
       @tabs.size
     end
 
-    def tabs(key = :all_tabs)
+    def replace(key, url, options = {})
+      @tabs.delete(tabs(key))
+      self.add(key, url, options)
+    end
+
+   def tabs(key = :all_tabs)
       if key==:all_tabs
         @tabs
       else
