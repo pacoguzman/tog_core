@@ -1,13 +1,8 @@
-EDGE = "EDGE"
-TOG_RELEASE = EDGE
-#TOG_RELEASE = "v0.5.4"
-
-APP_NAME = @root.split('/').last
 
 module Colored
   extend self
-  COLORS = { 'green'   => 32, 'yellow'  => 33,'blue'    => 34}
-  EXTRAS = {'clear'     => 0, 'bold'      => 1}
+  COLORS = {'green' => 32, 'yellow' => 33, 'blue' => 34}
+  EXTRAS = {'clear' => 0, 'bold' => 1}
   
   COLORS.each do |color, value|
     define_method(color) { colorize(self, :foreground => color) }
@@ -17,43 +12,50 @@ module Colored
       define_method("#{color}_on_#{highlight}") { colorize(self, :foreground => color, :background => highlight) }
     end
   end
+
   EXTRAS.each do |extra, value|
     next if extra == 'clear'
     define_method(extra) { colorize(self, :extra => extra) }
   end
-  define_method(:to_eol) do
+  
+	define_method(:to_eol) do
     tmp = sub(/^(\e\[[\[\e0-9;m]+m)/, "\\1\e[2K")
     if tmp == self
       return "\e[2K" << self
     end
     tmp
   end
-  def colorize(string, options = {})
+  
+	def colorize(string, options = {})
     colored = [color(options[:foreground]), color("on_#{options[:background]}"), extra(options[:extra])].compact * ''
     colored << string
     colored << extra(:clear)
   end
-  def colors
+  
+	def colors
     @@colors ||= COLORS.keys.sort
   end
-  def extra(extra_name)
+  
+	def extra(extra_name)
     extra_name = extra_name.to_s
     "\e[#{EXTRAS[extra_name]}m" if EXTRAS[extra_name]
   end
-  def color(color_name)
+  
+	def color(color_name)
     background = color_name.to_s =~ /on_/
     color_name = color_name.to_s.sub('on_', '')
     return unless color_name && COLORS[color_name]
     "\e[#{COLORS[color_name] + (background ? 10 : 0)}m" 
   end
-end unless Object.const_defined? :Colored
-String.send(:include, Colored)
 
-require 'open3'
+end unless Object.const_defined? :Colored
+
+String.send(:include, Colored)
 
 def silence!
 #  Rails::Generator::Base.logger.quiet = true
 end
+
 def verbum!
 #  Rails::Generator::Base.logger.quiet = false
 end
@@ -87,9 +89,9 @@ def install_require_gems
 end
 
 def install_tog_core_plugins    
-  quiet_git_install('tog_core', "git://github.com/tog/tog_core.git", TOG_RELEASE )
-  quiet_git_install('tog_social', "git://github.com/tog/tog_social.git", TOG_RELEASE )
-  quiet_git_install('tog_mail', "git://github.com/tog/tog_mail.git", TOG_RELEASE )
+  quiet_git_install('tog_core', "git://github.com/aspgems/tog_core.git", TOG_RELEASE )
+  quiet_git_install('tog_social', "git://github.com/aspgems/tog_social.git", TOG_RELEASE )
+  quiet_git_install('tog_mail', "git://github.com/aspgems/tog_mail.git", TOG_RELEASE )
 
   route "map.routes_from_plugin 'tog_core'"
   puts "* adding tog_core routes to host app... #{"added".green.bold}";
@@ -101,7 +103,6 @@ def install_tog_core_plugins
   generate "update_tog_migration"
   puts "* generating tog_core migration... #{"generated".green.bold}";
 end
-
 
 def install_acts_as_commentable
   generate "comment" 
@@ -144,13 +145,60 @@ def install_tog_user_plugin
     
     rake "auth:gen:site_key"
     
-    quiet_git_install('tog_user', "git://github.com/tog/tog_user.git", TOG_RELEASE)
+    quiet_git_install('tog_user', "git://github.com/aspgems/tog_user.git", TOG_RELEASE)
 
     route "map.routes_from_plugin 'tog_user'"
     puts "* adding routes to host app... #{"added".green.bold}";
   else
     silence!  
   end
+end
+
+def install_svn_plugins(plugins)
+  plugins.each_pair do |name, url| 
+    print "* #{name}... "; STDOUT.flush
+    plugin name, :svn => url 
+    puts "installed".green.bold
+  end
+end 
+
+def install_git_plugins(plugins)
+  plugins.each_pair do |name, url|     
+    quiet_git_install(name, url) 
+  end                    
+end   
+
+def quiet_git_install(name, url, tag=nil)
+  tag = tag && tag != EDGE ? "-r tag #{tag}'": "" 
+  print "* #{name} #{tag if tag}... "; 
+  plugin name, :git => "#{tag} #{url}"
+  # Open3 doesn't work on windows, so no quiet install
+  # resolution = "installed".green
+  #   command = "script/plugin install #{url}"
+  #   command << " -r 'tag #{tag}'" if tag && tag != EDGE 
+  #    Open3.popen3(command) { |stdin, stdout, stderr| 
+  #      stdout.each { |line| resolution = "already installed -> skipped".yellow if line =~ /already installed/; STDOUT.flush }
+  #    }
+  # puts resolution.bold  
+end
+
+def aspsocial_intro_banner
+	puts %q{
+Welcome to ASPgem's Tog-based sites generator! This program wraps the great Tog 
+installer and adds a couple of steps, in this order:
+
+ 1. Freeze rails version.
+ 2. Configure development database.
+
+Besides, it will change the origin of some plugins, adds tog_blueprint so that
+extended views use blueprint css framework, cleans up the resulting application, 
+etc.
+
+Before starting, you may want to take a look at ASPsocial development wiki for known
+issues, guides and much more! 
+
+So, now...
+}
 end
 
 def introduction_banner
@@ -211,35 +259,49 @@ def installation_step(title, &block)
   yield
 end
 
-def install_svn_plugins(plugins)
-  plugins.each_pair do |name, url| 
-    print "* #{name}... "; STDOUT.flush
-    plugin name, :svn => url 
-    puts "installed".green.bold
-  end
-end 
-
-def install_git_plugins(plugins)
-  plugins.each_pair do |name, url|     
-    quiet_git_install(name, url) 
-  end                    
-end   
-
-def quiet_git_install(name, url, tag=nil)
-  tag = tag && tag != EDGE ? "-r tag #{tag}'": "" 
-  print "* #{name} #{tag if tag}... "; 
-  plugin name, :git => "#{tag} #{url}"
-  # Open3 doesn't work on windows, so no quiet install
-  # resolution = "installed".green
-  #   command = "script/plugin install #{url}"
-  #   command << " -r 'tag #{tag}'" if tag && tag != EDGE 
-  #    Open3.popen3(command) { |stdin, stdout, stderr| 
-  #      stdout.each { |line| resolution = "already installed -> skipped".yellow if line =~ /already installed/; STDOUT.flush }
-  #    }
-  # puts resolution.bold  
-end
+EDGE = "EDGE"
+TOG_RELEASE = EDGE
+#TOG_RELEASE = "v0.5.4"
+APP_NAME = @root.split('/').last
 
 silence!
+
+installation_step "..:: ASPgems Social ::.." do
+	aspsocial_intro_banner	
+	# Freezes rails verion in every new application
+	if yes? 'Freeze rails version to edge?'
+		rake 'rails:freeze:edge', :puts => ['y', 'n']
+	else
+		rake "rails:freeze:edge RELEASE=#{ask('Which version should I freeze rails to?')}", :interactive => true
+	end
+end
+
+# Rename database.yml for distribution use
+run 'mv config/database.yml config/database.yml.example'
+
+# Create the project's databases
+installation_step "#{APP_NAME} database configuration" do
+	adapter  = ask 'Database adapter [mysql]:'
+	database = ask "Database name [#{APP_NAME}_development]:"
+	username = ask 'Username [root]:' if adapter.blank? || adapter == 'mysql'
+	password = ask 'Password []:' if adapter.blank? || adapter == 'mysql'
+	encoding = ask 'Encoding [utf8]:'
+	
+	database_yml = <<-EOF
+development:
+\s\sadapter: #{adapter.blank? ? 'mysql' : adapter}
+\s\sdatabase: #{database.blank? ? APP_NAME << '_development' : database}
+\s\sencoding: #{encoding.blank? ? 'utf8' : encoding}
+	EOF
+
+	if username
+		database_yml << %Q{\s\susername: #{username.blank? ? 'root' : username}\n} 
+	end
+	database_yml << %Q{\s\spassword: #{password}\n} if password
+
+	file 'config/database.yml', database_yml
+	rake 'db:create:all'
+end
 
 installation_step "Welcome to the Tog installer #{TOG_RELEASE}" do
   introduction_banner
@@ -253,7 +315,7 @@ end
 installation_step "Installing plugin dependencies..." do
   
   install_svn_plugins({
-    'seo_urls'               => "http://svn.redshiftmedia.com/svn/plugins/seo_urls"
+    'seo_urls'          => "http://svn.redshiftmedia.com/svn/plugins/seo_urls"
   })  
   
   #also installed restful_authentication by tog_user optional part
@@ -283,6 +345,12 @@ end
 
 installation_step "Installing tog core plugins..." do   
   install_tog_core_plugins
+end
+
+installation_step "Installing tog blueprint plugin..." do
+	install_svn_plugins({
+		'tog_blueprint'			=> "http://svn.aspgems.com/aspgems/tog-blueprint/trunk"
+	})
 end
 
 installation_step "Updating the host app files..." do
