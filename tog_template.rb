@@ -307,8 +307,8 @@ installation_step "#{APP_NAME} database configuration" do
   run 'mv config/database.yml config/database.yml.example'
   adapter  = ask 'Database adapter [mysql]:'
   database = ask "Database name [#{APP_NAME}_development]:"
-  username = ask 'Username [root]:' if adapter.blank? || adapter == 'mysql'
-  password = ask 'Password []:' if adapter.blank? || adapter == 'mysql'
+  username = ask 'Username [root]:' unless adapter == 'sqlite3'
+  password = ask 'Password []:' unless adapter == 'sqlite3'
   encoding = ask 'Encoding [utf8]:'
 
   database_yml = <<-EOF
@@ -316,6 +316,8 @@ development:
 \s\sadapter: #{adapter.blank? ? 'mysql' : adapter}
 \s\sdatabase: #{database.blank? ? APP_NAME << '_development' : database}
 \s\sencoding: #{encoding.blank? ? 'utf8' : encoding}
+\s\sreconnect: false
+\s\spool: 5
   EOF
 
   if username
