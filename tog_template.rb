@@ -69,6 +69,8 @@ def create_bundler_gemfile
   rails_version = ask "What version of rails should this project use?"
   puts 'Creating Gemfile...'
   file "Gemfile", %Q{
+source 'http://gems.github.com'
+source 'http://gemcutter.org'
 gem 'rails',                            '#{rails_version}'
 gem 'tog-tog',                          '>= 0.5',   :require_as => 'tog'
 gem 'mislav-will_paginate',             '~> 2.3.6', :require_as => 'will_paginate'
@@ -187,11 +189,12 @@ end
 def aspsocial_intro_banner
   puts %q{
 Welcome to ASPgem's Tog-based sites generator! This program wraps the Tog
-installer adding a couple of steps, in this order:
+installer adding a couple of steps, so next you will:
 
  1. Install bundler, create the Gemfile and bundle gems.
  2. Configure and create development database (youll need a user with
     'create database' privileges).
+ 3. Run Tog installer.
 
 Besides, it will change the origin of some plugins, add tog_blueprint so that
 extended views use blueprint css framework, clean up the resulting application,
@@ -364,8 +367,8 @@ installation_step "Installing tog core plugins..." do
 end
 
 installation_step "Installing tog blueprint plugin..." do
-  install_svn_plugins({
-    'tog_blueprint'     => "https://svn.aspgems.com/aspgems/tog-blueprint/trunk"
+  install_git_plugins({
+    'tog_blueprint' => 'git://github.com/aspgems/tog_blueprint.git'
   })
 end
 
