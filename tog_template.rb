@@ -163,6 +163,13 @@ def install_git_plugins(plugins)
   end
 end
 
+def install_plugins_with_template(plugins)
+  plugins.each_pair do |name, template|
+    print "* #{name}..."; STDOUT.flush
+    rake "rails:template LOCATION=#{template}"
+  end
+end
+
 def quiet_git_install(name, url, tag=nil)
   tag = tag && tag != EDGE ? "-r tag #{tag}'": ""
   print "* #{name} #{tag if tag}... ";
@@ -288,7 +295,7 @@ class Rails::Boot
     end
   end
 end
-  }
+}
 end
 
 # Create the project's databases
@@ -358,8 +365,18 @@ end
 
 installation_step "Installing tog blueprint plugin..." do
   install_svn_plugins({
-    'tog_blueprint'     => "http://svn.aspgems.com/aspgems/tog-blueprint/trunk"
+    'tog_blueprint'     => "https://svn.aspgems.com/aspgems/tog-blueprint/trunk"
   })
+end
+
+installation_step "Installing optional plugins..." do
+  %w[ tog_conversatio ].each do |plugin|
+    if yes? "Install #{plugin}?"
+      install_plugins_with_template({
+        plugin => "http://tr.im/aspgems_#{plugin}"
+      })
+    end
+  end
 end
 
 installation_step "Updating the host app files..." do
