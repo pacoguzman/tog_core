@@ -76,6 +76,8 @@ gem 'tog-tog',                          '>= 0.5',   :require_as => 'tog'
 gem 'mislav-will_paginate',             '~> 2.3.6', :require_as => 'will_paginate'
 gem 'desert',                           '>= 0.5.2'
 gem 'thoughtbot-factory_girl',                      :require_as => 'factory_girl', :only => :testing
+gem 'thoughtbot-shoulda',               '>=2.10.1', :require_as => 'shoulda', :only => :testing
+gem 'mocha',                            '0.9.7',    :only => :testing
 gem 'jackdempsey-acts_as_commentable',  '2.0.1',    :require_as => 'acts_as_commentable'
 gem 'mreinsch-acts_as_rateable',        '2.0.1',    :require_as => 'acts_as_rateable'
 gem 'RedCloth',                         '>= 4.2.0', :require_as => 'redcloth'
@@ -311,19 +313,30 @@ installation_step "#{APP_NAME} database configuration" do
   password = ask 'Password []:' unless adapter == 'sqlite3'
   encoding = ask 'Encoding [utf8]:'
 
-  database_yml = <<-EOF
-development:
+  database_config = <<-EOS
 \s\sadapter: #{adapter.blank? ? 'mysql' : adapter}
-\s\sdatabase: #{database.blank? ? APP_NAME << '_development' : database}
 \s\sencoding: #{encoding.blank? ? 'utf8' : encoding}
 \s\sreconnect: false
 \s\spool: 5
+  EOS
+
+  database_config << %Q{\s\susername: #{username.blank? ? 'root' : username}\n} if username
+  database_config << %Q{\s\spassword: #{password}\n} if password
+
+  database_yml = <<-EOF
+development:
+\s\sdatabase: #{database.blank? ? APP_NAME + '_development' : database}
+#{database_config}
+
   EOF
 
-  if username
-    database_yml << %Q{\s\susername: #{username.blank? ? 'root' : username}\n}
+  if yes? "Do you want me to create the test database (#{APP_NAME + '_test'})?"
+    database_yml << <<-EOF
+test:
+\s\sdatabase: #{APP_NAME + '_test'}
+#{database_config}
+  EOF
   end
-  database_yml << %Q{\s\spassword: #{password}\n} if password
 
   file 'config/database.yml', database_yml
   rake 'db:create:all'
