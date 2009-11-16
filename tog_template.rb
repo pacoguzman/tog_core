@@ -389,7 +389,7 @@ installation_step "Installing tog blueprint plugin..." do
 end
 
 installation_step "Installing optional plugins..." do
-  %w[ tog_conversatio ].each do |plugin|
+  %w[ tog_conversatio tog_forum ].each do |plugin|
     if yes? "Install #{plugin}?"
       install_plugins_with_template({
         plugin => "http://tr.im/aspgems_#{plugin}"
