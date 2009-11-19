@@ -71,6 +71,7 @@ def create_bundler_gemfile
   file "Gemfile", %Q{
 source 'http://gems.github.com'
 source 'http://gemcutter.org'
+bundle_path 'vendor/bundled_gems'
 gem 'rails',                            '#{rails_version}'
 gem 'tog-tog',                          '>= 0.5',   :require_as => 'tog'
 gem 'mislav-will_paginate',             '~> 2.3.6', :require_as => 'will_paginate'
@@ -91,6 +92,7 @@ def install_tog_core_plugins
   quiet_git_install('tog_core', "git://github.com/aspgems/tog_core.git", TOG_RELEASE )
   quiet_git_install('tog_social', "git://github.com/aspgems/tog_social.git", TOG_RELEASE )
   quiet_git_install('tog_mail', "git://github.com/aspgems/tog_mail.git", TOG_RELEASE )
+  quiet_git_install('tog_picto', "git://github.com/aspgems/tog_picto.git", TOG_RELEASE )
 
   route "map.routes_from_plugin 'tog_core'"
   puts "* adding tog_core routes to host app... #{"added".green.bold}";
@@ -98,6 +100,8 @@ def install_tog_core_plugins
   puts "* adding tog_tog_social routes to host app... #{"added".green.bold}";
   route "map.routes_from_plugin 'tog_mail'"
   puts "* adding tog_mail routes to host app... #{"added".green.bold}";
+  route "map.routes_from_plugin 'tog_picto'"
+  puts "* adding tog_picto routes to host app... #{"added".green.bold}";
 
   generate "update_tog_migration"
   puts "* generating tog_core migration... #{"generated".green.bold}";
@@ -281,7 +285,7 @@ installation_step "Install bundler and bundle gems..." do
   run 'gem bundle'
   puts 'Creating preinitializer...'
   file 'config/preinitializer.rb', %q{
-require "#{RAILS_ROOT}/vendor/gems/environment"
+require File.join(RAILS_ROOT, 'vendor', 'bundled_gems', 'environment')
 
 class Rails::Boot
   def run
@@ -358,7 +362,8 @@ installation_step "Installing plugin dependencies..." do
     'paperclip'         => "git://github.com/thoughtbot/paperclip.git",
     'viking'            => "git://github.com/technoweenie/viking.git",
     'acts_as_shareable' => "git://github.com/molpe/acts_as_shareable.git",
-    'fckeditor'         => "git://github.com/molpe/fckeditor.git"
+    'fckeditor'         => "git://github.com/molpe/fckeditor.git",
+    'acts_as_list'      => "git://github.com/rails/acts_as_list.git"
   })
 
 end
