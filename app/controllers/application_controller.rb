@@ -15,4 +15,10 @@ class ApplicationController < ActionController::Base
     I18n.locale = current_user_locale
     logger.debug "* Locale set to '#{I18n.locale}'"
   end
+  
+  private 
+  #to be called as a filter in actions that require the fckeditor
+  def include_rich_text_editor
+    @javascripts << :fckeditor
+  end
 end
