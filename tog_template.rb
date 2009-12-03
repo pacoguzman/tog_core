@@ -67,6 +67,8 @@ end
 
 def create_bundler_gemfile
   rails_version = ask "What version of rails should this project use?"
+  # update RAILS_GEM_VERSION in environment.rb
+  gsub_file File.join('config', 'environment.rb'), /^(RAILS_GEM_VERSION = ')\d\.\d\.\d('.*)/, "\\1#{rails_version}\\2"
   puts 'Creating Gemfile...'
   file "Gemfile", %Q{
 clear_sources
