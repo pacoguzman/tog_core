@@ -294,7 +294,9 @@ installation_step "Install bundler and bundle gems..." do
   puts 'Creating preinitializer...'
   file 'config/preinitializer.rb', %q{
 require File.join(RAILS_ROOT, 'vendor', 'bundled_gems', 'environment')
-
+  }
+  # extend Boot.run in config/boot.rb to work with passenger's smart mode
+  gsub_file 'config/boot.rb', /^(end)/, %Q{\\1\n\n
 class Rails::Boot
   def run
     load_initializer
