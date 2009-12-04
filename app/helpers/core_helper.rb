@@ -7,6 +7,7 @@ module CoreHelper
   include RatesHelper
   include WillPaginate::ViewHelpers 
   include I18nHelper
+  include VotesHelper
    
   
   def config

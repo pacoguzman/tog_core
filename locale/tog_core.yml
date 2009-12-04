@@ -37,6 +37,12 @@ en:
         website: Website
         post_comment: Post comment
         comment: Comment        
+      voting:
+        voting: Votes
+        for: For
+        against: Against
+        already_voted: You've already voted this item
+        added: Vote added!
       rating:
         rating: Rating        
         added: Rate added

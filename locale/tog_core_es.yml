@@ -37,6 +37,12 @@ es:
         website: Website
         post_comment: Enviar comentario
         comment: Comentario        
+      voting:
+        voting: Votos
+        for: A favor
+        against: En contra
+        already_voted: Ya has votado esta entrada
+        added: Voto añadido!
       rating:
         rating: Valoración        
         added: Valoración añadida

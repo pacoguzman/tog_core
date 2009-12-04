@@ -53,4 +53,7 @@ namespace(:member) do |member|
   member.with_options(:controller => 'rates') do |rate|
     rate.rate '/rate',  :action=>'create'
   end
+  member.with_options(:controller => 'votes') do |vote|
+    vote.vote '/vote',  :action => 'create'
+  end
 end
