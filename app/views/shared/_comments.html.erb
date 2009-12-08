@@ -1,24 +1,28 @@
 <div class="portlet portletI">
   <h2><span><strong><%= I18n.t("tog_core.site.comment.comments")%></strong></span></h2>
   <div class="portlet_content">
-    <ul>
-      <% if !commentable.comments.blank? %>
-        <% for comment in commentable.comments %>
-          <li class="clearfix<%= cycle(nil, " pair") %>" id="comment_<%= comment.id %>">
-              <% if comment.user %>
-                <div class="image"><%= link_to icon_for_profile(comment.user.profile, 'small'), profile_path(comment.user.profile) %></div>
-                <div class="text"><strong><%= link_to comment.user.profile.full_name, profile_path(comment.user.profile) %> <%= I18n.t("tog_core.site.comment.says")%>:</strong></div>
-              <% else %>
-                <div class="text"><strong><%= comment_user_name(comment) %> <%= I18n.t("tog_core.site.comment.says")%>:</strong></div>
-              <% end %>
-              <%= sanitize(textilize(comment.comment), :tags => (Tog::Plugins.settings :tog_core, 'sanitized.comments.allowed_tags').split, :attributes => (Tog::Plugins.settings :tog_core, 'sanitized.comments.allowed_attributes').split) %>
-              <span class="helpinfo"><%= comment.created_at %> <%= link_to I18n.t("tog_core.site.comment.permalink"), "#comment_#{comment.id}" %></span>
-          </li>
-        <% end %>
-      <% else %>
-        <%= I18n.t("tog_core.site.comment.no_comments")%>
-      <% end %>
-    </ul>
+     <% if !commentable.comments.blank? %>
+        <ul>
+          <% for comment in commentable.comments %>
+              <li class="clearfix<%= cycle(nil, " pair") %>" id="comment_<%= comment.id %>">
+                <% if comment.user %>
+                    <div class="image"><%= link_to icon_for_profile(comment.user.profile, 'small'), profile_path(comment.user.profile) %></div>
+                    <div class="text">
+                      <strong><%= link_to comment.user.profile.full_name, profile_path(comment.user.profile) %> <%= I18n.t("tog_core.site.comment.says") %>
+                        :</strong></div>
+                <% else %>
+                    <div class="text">
+                      <strong><%= comment_user_name(comment) %> <%= I18n.t("tog_core.site.comment.says") %>:</strong>
+                    </div>
+                <% end %>
+                <%= sanitize(textilize(comment.comment), :tags => (Tog::Plugins.settings :tog_core, 'sanitized.comments.allowed_tags').split, :attributes => (Tog::Plugins.settings :tog_core, 'sanitized.comments.allowed_attributes').split) %>
+                <span class="helpinfo"><%= comment.created_at %> <%= link_to I18n.t("tog_core.site.comment.permalink"), "#comment_#{comment.id}" %></span>
+              </li>
+          <% end %>
+        </ul>
+    <% else %>
+        <p><%= I18n.t("tog_core.site.comment.no_comments") %></p>
+    <% end %>
   </div>
 </div> <!-- /#potlet_featuredPosts -->
 
