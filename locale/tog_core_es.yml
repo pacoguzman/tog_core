@@ -43,6 +43,7 @@ es:
         against: En contra
         already_voted: Ya has votado esta entrada
         added: Voto añadido!
+        no_votes_yet: Todavía no hay votos
       rating:
         rating: Valoración        
         added: Valoración añadida

@@ -43,6 +43,7 @@ en:
         against: Against
         already_voted: You've already voted this item
         added: Vote added!
+        no_votes_yet: No votes yet
       rating:
         rating: Rating        
         added: Rate added
