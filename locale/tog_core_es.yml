@@ -67,6 +67,9 @@ es:
         title: Abusos denunciados
         confirm: Confirmar
         confirmed: Abuso confirmado. Contacte al usuario y solicítele que elimine dicho contenido        
+        confirmed_and_destroyed: Abuso confirmado. El contenido ha sido eliminado
+        error_confirming: Ha ocurrido un error al confirmar el abuso.
+        confirm_removal: Esta acción eliminará el contenido reportado como abuso.
         model:
           abuse: Abuso
           subject: Asunto

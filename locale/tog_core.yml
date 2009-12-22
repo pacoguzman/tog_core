@@ -67,6 +67,9 @@ en:
         title: Reported abuses
         confirm: Confirm
         confirmed: Abuse confirmed. Contact user and request him to remove that content
+        confirmed_and_destroyed: Abuse confirmed. Content has been automatically removed
+        error_confirming: An error ocured while confirming abuse
+        confirm_removal: This action will remove the content marked as abused
         model:
           abuse: Abuse
           subject: Subject

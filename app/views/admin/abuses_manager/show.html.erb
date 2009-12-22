@@ -23,6 +23,9 @@
     </p>
 
     <%= submit_tag I18n.t("tog_core.admin.abuses.confirm") %>
+    <% if Tog::Plugins.settings(:tog_core, 'abuses.destroy_resource') %>
+      <%= I18n.t('tog_core.admin.abuses.confirm_removal') %>
+    <% end %>
   </fieldset>
   
 

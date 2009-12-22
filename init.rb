@@ -34,6 +34,8 @@ Tog::Plugins.settings :tog_core,  'storage' => 'filesystem',
 #                                   'storage.s3.access_key_id' => 'YOUR_KEY_HERE',
 #                                   'storage.s3.secret_access_key' => 'YOUR_KEY_HERE'
 
+Tog::Plugins.settings :tog_core,  'abuses.destroy_resource' => true
+
 
 
 require "active_record_helper_patch"
