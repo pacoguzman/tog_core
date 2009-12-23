@@ -87,10 +87,10 @@ module CoreHelper
     options[:toolbarSet] ||= 'Basic'
     base_fck_code=fckeditor_textarea obj, field,  options
     
-    options[:custom_configurations_file] ||= '/tog_core/javascripts/fck_public_config.js?1' #default config included for aspsocial editors    
-    editor_code=base_fck_code + javascript_tag("oFCKeditor.Config['CustomConfigurationsPath'] = '#{options[:custom_configurations_file]}';\n")
+    options[:custom_configurations_file] ||= '/tog_core/javascripts/fck_public_config.js?1' #default config included for aspsocial editors   
+    base_fck_code.sub!(/oFCKeditor.Config\['CustomConfigurationsPath'\].*/,"oFCKeditor.Config['CustomConfigurationsPath'] = '#{options[:custom_configurations_file]}';")           
     
-    editor_code    
+    base_fck_code    
   end
   
   def image_for_rich_text_area(obj, field)
