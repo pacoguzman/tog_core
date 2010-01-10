@@ -93,6 +93,7 @@ gem 'RedCloth',                         '>= 4.2.0', :require_as => 'redcloth'
 gem 'mbleigh-acts-as-taggable-on',      '1.0.5',    :require_as => 'acts-as-taggable-on'
 gem 'linkingpaths-acts_as_abusable',    '0.0.2',    :require_as => 'acts_as_abusable'
 gem 'rubyist-aasm',                     '~> 2.1.1', :require_as => 'aasm'
+gem 'oauth',                            '>=0.3.5'
   }
 end
 
