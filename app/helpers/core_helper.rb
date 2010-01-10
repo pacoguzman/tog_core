@@ -56,14 +56,14 @@ module CoreHelper
     Activity.find(:all, :limit=> size, :order => " created_at DESC").collect{|a|
       content_tag :li, :class => "clearfix" + cycle(nil, " pair") do 
         profile = content_tag :div, :class => "image" do 
-          link_to icon_for_profile(a.user.profile, 'tiny'), profile_path(a.user.profile)
+          link_to icon_for_profile(a.author.profile, 'tiny'), profile_path(a.author.profile)
         end
         text = content_tag :div, :class => "text" do 
-          " #{link_to(a.user.profile.full_name, profile_path(a.user.profile))} generated action '#{a.action}' on #{a.item_type}##{a.item_id} "
+          " #{link_to(a.author.profile.full_name, profile_path(a.author.profile))} generated action '#{a.actions}' on #{a.object_type}##{a.object_id} "
         end
         profile + text
       end
-    }
+    } if Activity # Install tog_activity
   end
   
   def will_paginate_with_i18n(collection, options = {})

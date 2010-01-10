@@ -65,6 +65,11 @@ def add_desert_require
   gsub_file 'config/environment.rb', /(#{Regexp.escape(sentinel)})/mi, "\nrequire 'desert'\n\\1"
 end
 
+def add_desert_ext_require_for_tog_activity
+  sentinel = 'Rails::Initializer.run do |config|'
+  gsub_file 'config/environment.rb', /(#{Regexp.escape(sentinel)})/mi, "\nrequire \"#{Rails.root}/vendor/plugins/tog_activity/lib/desert_ext/with_observers\"\n\\1"
+end
+
 def create_bundler_gemfile
   rails_version = ask "What version of rails should this project use?"
   # update RAILS_GEM_VERSION in environment.rb
@@ -79,9 +84,9 @@ gem 'rails',                            '#{rails_version}'
 gem 'tog-tog',                          '>= 0.5',   :require_as => 'tog'
 gem 'mislav-will_paginate',             '~> 2.3.6', :require_as => 'will_paginate'
 gem 'desert',                           '>= 0.5.2'
-gem 'thoughtbot-factory_girl',                      :require_as => 'factory_girl', :only => :testing
-gem 'thoughtbot-shoulda',               '>=2.10.1', :require_as => 'shoulda', :only => :testing
-gem 'mocha',                            '0.9.7',    :only => :testing
+gem 'thoughtbot-factory_girl',                      :require_as => 'factory_girl', :only => :test
+gem 'thoughtbot-shoulda',               '>=2.10.1', :require_as => 'shoulda', :only => :tes
+gem 'mocha',                            '0.9.7',    :only => :test
 gem 'jackdempsey-acts_as_commentable',  '2.0.1',    :require_as => 'acts_as_commentable'
 gem 'mreinsch-acts_as_rateable',        '2.0.1',    :require_as => 'acts_as_rateable'
 gem 'RedCloth',                         '>= 4.2.0', :require_as => 'redcloth'
@@ -92,8 +97,9 @@ gem 'rubyist-aasm',                     '~> 2.1.1', :require_as => 'aasm'
 end
 
 def install_tog_core_plugins
-  quiet_git_install('tog_core', "git://github.com/aspgems/tog_core.git", TOG_RELEASE )
-  quiet_git_install('tog_social', "git://github.com/aspgems/tog_social.git", TOG_RELEASE )
+  quiet_git_install('tog_core', "git://github.com/pacoguzman/tog_core.git", TOG_RELEASE )
+  quiet_git_install('tog_activity', "git://github.com/pacoguzman/tog_activity.git", TOG_RELEASE )
+  quiet_git_install('tog_social', "git://github.com/pacoguzman/tog_social.git", TOG_RELEASE )
   quiet_git_install('tog_mail', "git://github.com/aspgems/tog_mail.git", TOG_RELEASE )
   quiet_git_install('tog_picto', "git://github.com/aspgems/tog_picto.git", TOG_RELEASE )
 
@@ -140,11 +146,6 @@ def generate_acts_as_taggable_migration
   puts "* acts_as_taggable migration... #{"generated".green.bold}";
 end
 
-def generate_acts_as_scribe_migration
-  generate "acts_as_scribe_migration"
-  puts "* acts_as_scribe migration... #{"generated".green.bold}";
-end
-
 def install_tog_user_plugin
   verbum!
 
@@ -156,7 +157,7 @@ def install_tog_user_plugin
 
     rake "auth:gen:site_key"
 
-    quiet_git_install('tog_user', "git://github.com/aspgems/tog_user.git", TOG_RELEASE)
+    quiet_git_install('tog_user', "git://github.com/pacoguzman/tog_user.git", TOG_RELEASE)
 
     route "map.routes_from_plugin 'tog_user'"
     puts "* adding routes to host app... #{"added".green.bold}";
@@ -293,7 +294,7 @@ installation_step "Install bundler and bundle gems..." do
   run 'gem bundle'
   puts 'Creating preinitializer...'
   file 'config/preinitializer.rb', %q{
-require File.join(RAILS_ROOT, 'vendor', 'bundled_gems', 'environment')
+require File.join(RAILS_ROOT, 'vendor', 'bundled_gems', 'ruby', '1.8', 'environment')
   }
   # extend Boot.run in config/boot.rb to work with passenger's smart mode
   gsub_file 'config/boot.rb', /^(end)/, %Q{\\1\n\n
@@ -368,7 +369,6 @@ installation_step "Installing plugin dependencies..." do
 
   #also installed restful_authentication by tog_user optional part
   install_git_plugins({
-    'acts_as_scribe'    => "git://github.com/linkingpaths/acts_as_scribe.git",
     'paperclip'         => "git://github.com/thoughtbot/paperclip.git",
     'viking'            => "git://github.com/technoweenie/viking.git",
     'acts_as_shareable' => "git://github.com/molpe/acts_as_shareable.git",
@@ -384,7 +384,6 @@ installation_step "Generating dependencies migrations..." do
   generate_acts_as_rateable_migration
   generate_acts_as_abusable_migration
   generate_acts_as_taggable_migration
-  generate_acts_as_scribe_migration
   generate_acts_as_shareable_migration
   generate_acts_as_voteable_migration
 end
@@ -417,6 +416,7 @@ end
 
 installation_step "Updating the host app files..." do
   add_desert_require
+  add_desert_ext_require_for_tog_activity
   environment( "config.reload_plugins = true if RAILS_ENV == 'development'" )
   append_file 'Rakefile', "require 'tasks/tog'\n"
   puts "* including tog rake tasks... #{"done".green.bold}";
