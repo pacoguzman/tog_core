@@ -44,44 +44,27 @@ module CoreHelper
     @feeds << [type, url_options, tag_options]
   end
 
-
-
   def clean(url)
     uri = URI.parse(url)
     uri.path.gsub(%r{/+}, '/').gsub(%r{/$}, '')
-  end
-
-
-  def public_continuum(size = 40)
-    Activity.find(:all, :limit=> size, :order => " created_at DESC").collect{|a|
-      content_tag :li, :class => "clearfix" + cycle(nil, " pair") do 
-        profile = content_tag :div, :class => "image" do 
-          link_to icon_for_profile(a.author.profile, 'tiny'), profile_path(a.author.profile)
-        end
-        text = content_tag :div, :class => "text" do 
-          " #{link_to(a.author.profile.full_name, profile_path(a.author.profile))} generated action '#{a.actions}' on #{a.object_type}##{a.object_id} "
-        end
-        profile + text
-      end
-    } if Activity # Install tog_activity
   end
   
   def will_paginate_with_i18n(collection, options = {})
     will_paginate_without_i18n(collection, options.merge(:previous_label => I18n.t("will_paginate.previous"), :next_label => I18n.t("will_paginate.next") ))
   end
-  alias_method_chain :will_paginate, :i18n  
-  
+  alias_method_chain :will_paginate, :i18n
+
   def page_entries_info(collection, options = {})
-      entry_name = options[:entry_name] ||
-                    (collection.empty?? I18n.t("will_paginate.entry_name") : collection.first.class.human_name)
-      
-      I18n.t("will_paginate.page_entries_info",
-          :count => collection.size,
-          :entry_name => (collection.size == 1) ? entry_name : entry_name.pluralize,
-          :start => collection.offset.succ,
-          :end => collection.offset + collection.size,
-          :total => collection.total_entries)
-    end
+    entry_name = options[:entry_name] ||
+            (collection.empty?? I18n.t("will_paginate.entry_name") : collection.first.class.human_name)
+
+    I18n.t("will_paginate.page_entries_info",
+           :count => collection.size,
+           :entry_name => (collection.size == 1) ? entry_name : entry_name.pluralize,
+           :start => collection.offset.succ,
+           :end => collection.offset + collection.size,
+           :total => collection.total_entries)
+  end
   
   def rich_text_area(obj, field, options = {})    
     options[:toolbarSet] ||= 'Basic'
