@@ -54,9 +54,12 @@ Tog::Plugins.helpers CoreHelper
 
 Tog::Interface.sections(:admin).add "Home", "/admin/dashboard"
 
-manage = Tog::Interface.sections(:admin).add "Manage", "/admin/configuration"
-manage.add_item "Configuration", "/admin/configuration"
-manage.add_item "Abuses", "/admin/manage_abuses"
+#manage = Tog::Interface.sections(:admin).add "Manage", "/admin/configuration"
+#manage.add_item "Configuration", "/admin/configuration"
+#manage.add_item "Abuses", "/admin/manage_abuses"
+
+Tog::Interface.sections(:admin).add "Configuration", "/admin/configuration"
+Tog::Interface.sections(:admin).add "Abuses", "/admin/manage_abuses"
 
 Tog::Interface.sections(:member).add "Home", "/"
 Tog::Interface.sections(:site).add "Home", "/"

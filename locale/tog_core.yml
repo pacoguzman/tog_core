@@ -6,14 +6,17 @@ en:
     entry_name: Entry
   interface:
     admin:
+      title: Administration Area
       home: Home
       manage: "Manage"
-      manage_items:
-        configuration: "Configuration"
-        abuses: "Abuse"
+      # manage_items:
+      configuration: "Configuration"
+      abuses: "Abuse"
     member:
+      title: Member Area
       home: Home
     site:
+      title: ""
       home: Home
   tog_core:
     plugin_name: Core
